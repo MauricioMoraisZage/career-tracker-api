@@ -1,5 +1,8 @@
 import express from "express";
 import { prisma } from "./lib/prisma.js";
+import { errorMiddleware } from "./middlewares/error.middleware.js";
+import { authRoutes } from "./routes/auth.routes.js";
+import { userRoutes } from "./routes/user.routes.js";
 
 export const app = express();
 
@@ -21,3 +24,8 @@ app.get("/db-health", async (_request, response) => {
     usersCount,
   });
 });
+
+app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
+
+app.use(errorMiddleware);
