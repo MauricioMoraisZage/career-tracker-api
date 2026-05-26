@@ -20,5 +20,34 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  courses Course[]
+
   @@map("users")
+}
+
+enum CourseStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  PAUSED
+}
+
+model Course {
+  id          String       @id @default(uuid())
+  title       String
+  platform    String?
+  description String?
+  status      CourseStatus @default(NOT_STARTED)
+  progress    Int          @default(0)
+  startedAt   DateTime?
+  finishedAt  DateTime?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("courses")
 }
