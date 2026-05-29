@@ -21,7 +21,6 @@ model User {
   updatedAt DateTime @updatedAt
 
   courses Course[]
-
   @@map("users")
 }
 
@@ -31,7 +30,6 @@ enum CourseStatus {
   COMPLETED
   PAUSED
 }
-
 model Course {
   id          String       @id @default(uuid())
   title       String
@@ -45,9 +43,31 @@ model Course {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  modules CourseModule[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   @@index([userId])
   @@map("courses")
+}
+
+enum CourseModuleStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+model CourseModule {
+  id          String             @id @default(uuid())
+  title       String
+  description String?
+  status      CourseModuleStatus @default(NOT_STARTED)
+  order       Int
+
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([courseId])
+  @@map("course_modules")
 }
