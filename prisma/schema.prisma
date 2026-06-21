@@ -21,6 +21,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   courses Course[]
+  jobs Job[]
   @@map("users")
 }
 
@@ -70,4 +71,52 @@ model CourseModule {
   updatedAt DateTime @updatedAt
   @@index([courseId])
   @@map("course_modules")
+}
+
+enum JobStatus {
+  SAVED
+  APPLIED
+  INTERVIEW
+  REJECTED
+  OFFER
+}
+model Job {
+  id          String    @id @default(uuid())
+  company     String
+  position    String
+  location    String?
+  remote      Boolean   @default(false)
+  jobUrl      String?
+  description String?
+  salaryRange String?
+  status      JobStatus @default(SAVED)
+  appliedAt   DateTime?
+
+  userId String
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  application Application?
+
+  @@index([userId])
+  @@index([userId, status])
+  @@map("jobs")
+}
+
+model Application {
+  id          String   @id @default(uuid())
+  cvVersion   String?
+  coverLetter String?
+  notes       String?
+  appliedAt   DateTime @default(now())
+
+  jobId String @unique
+  job   Job    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("applications")
 }
