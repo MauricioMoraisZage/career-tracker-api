@@ -5,6 +5,7 @@ import { authRoutes } from "./routes/auth.routes.js";
 import { userRoutes } from "./routes/user.routes.js";
 import { courseRoutes } from "./routes/course.routes.js";
 import { courseModuleRoutes } from "./routes/course-module.routes.js";
+import { jobRoutes } from "./routes/job.routes.js";
 
 export const app = express();
 
@@ -31,5 +32,6 @@ app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/courses", courseRoutes);
 app.use("/course-modules", courseModuleRoutes);
+app.use("/jobs", jobRoutes);
 
 app.use(errorMiddleware);
