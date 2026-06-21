@@ -4,6 +4,7 @@ import { errorMiddleware } from "./middlewares/error.middleware.js";
 import { authRoutes } from "./routes/auth.routes.js";
 import { userRoutes } from "./routes/user.routes.js";
 import { courseRoutes } from "./routes/course.routes.js";
+import { courseModuleRoutes } from "./routes/course-module.routes.js";
 
 export const app = express();
 
@@ -29,5 +30,6 @@ app.get("/db-health", async (_request, response) => {
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/courses", courseRoutes);
+app.use("/course-modules", courseModuleRoutes);
 
 app.use(errorMiddleware);
