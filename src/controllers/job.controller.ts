@@ -42,24 +42,17 @@ export class JobController {
     try {
       const userId = getAuthenticatedUserId(request);
 
-      const query = request.query as unknown as ListJobsQuery;
+      const query = response.locals.validatedQuery as ListJobsQuery;
 
       const result = await jobService.list(userId, query);
 
-      return response.status(200).json({
-        status: "success",
-        ...result,
-      });
+      return response.status(200).json({status: "success", ...result});
     } catch (error) {
       return next(error);
     }
   }
 
-  async findOne(
-    request: Request<JobIdParams>,
-    response: Response,
-    next: NextFunction,
-  ) {
+  async findOne(request: Request<JobIdParams>, response: Response, next: NextFunction) {
     try {
       const userId = getAuthenticatedUserId(request);
 
@@ -74,19 +67,11 @@ export class JobController {
     }
   }
 
-  async update(
-    request: Request<JobIdParams>,
-    response: Response,
-    next: NextFunction,
-  ) {
+  async update(request: Request<JobIdParams>, response: Response, next: NextFunction) {
     try {
       const userId = getAuthenticatedUserId(request);
 
-      const job = await jobService.update(
-        userId,
-        request.params.id,
-        request.body,
-      );
+      const job = await jobService.update(userId, request.params.id, request.body);
 
       return response.status(200).json({
         status: "success",
@@ -98,11 +83,8 @@ export class JobController {
     }
   }
 
-  async delete(
-    request: Request<JobIdParams>,
-    response: Response,
-    next: NextFunction,
-  ) {
+  async delete(request: Request<JobIdParams>,
+    response: Response, next: NextFunction ) {
     try {
       const userId = getAuthenticatedUserId(request);
 

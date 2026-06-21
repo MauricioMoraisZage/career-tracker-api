@@ -26,11 +26,8 @@ function getAuthenticatedUserId(request: Request): string {
 }
 
 export class ApplicationController {
-  async create(
-    request: Request<JobApplicationParams>,
-    response: Response,
-    next: NextFunction,
-  ) {
+  async create(request: Request<JobApplicationParams>,
+    response: Response, next: NextFunction) {
     try {
       const userId = getAuthenticatedUserId(request);
 
@@ -50,23 +47,15 @@ export class ApplicationController {
     }
   }
 
-  async list(
-    request: Request,
-    response: Response,
-    next: NextFunction,
-  ) {
+  async list(request: Request, response: Response, next: NextFunction ) {
     try {
       const userId = getAuthenticatedUserId(request);
 
-      const query =
-        request.query as unknown as ListApplicationsQuery;
+	  const query = response.locals.validatedQuery as ListApplicationsQuery;
 
       const result = await applicationService.list(userId, query);
 
-      return response.status(200).json({
-        status: "success",
-        ...result,
-      });
+      return response.status(200).json({ status: "success", ...result });
     } catch (error) {
       return next(error);
     }

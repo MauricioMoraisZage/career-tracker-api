@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import { AppError } from "../errors/app-error.js";
 import type { AuthenticatedRequest } from "../middlewares/auth.middleware.js";
 import { CourseService } from "../services/course.service.js";
+import type { ListCoursesQuery } from "../validations/course.schema.js";
 
 const courseService = new CourseService();
 
@@ -43,12 +44,10 @@ export class CourseController {
   async list(request: Request, response: Response, next: NextFunction) {
     try {
       const userId = getAuthenticatedUserId(request);
-      const result = await courseService.list(userId, response.locals.query ?? {});
+      const query = response.locals.validatedQuery as ListCoursesQuery;
+      const result = await courseService.list(userId, query);
 
-      return response.status(200).json({
-        status: "success",
-        ...result,
-      });
+      return response.status(200).json({ status: "success", ...result });
     } catch (error) {
       return next(error);
     }

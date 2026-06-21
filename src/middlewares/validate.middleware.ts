@@ -23,7 +23,7 @@ export function validateBody(schema: ZodSchema) {
 
 export function validateQuery(schema: ZodSchema) {
   return (request: Request, response: Response, next: NextFunction) => {
-    const result = schema.safeParse(request.query ?? {});
+    const result = schema.safeParse(request.query);
 
     if (!result.success) {
       return response.status(400).json({
@@ -35,8 +35,7 @@ export function validateQuery(schema: ZodSchema) {
         })),
       });
     }
-
-    response.locals.query = result.data;
+    response.locals.validatedQuery = result.data;
     return next();
   };
 }
