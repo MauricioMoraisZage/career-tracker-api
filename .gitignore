@@ -4,3 +4,5 @@ dist
 .DS_Store
 
 /src/generated/prisma
+
+.env.test
