@@ -337,6 +337,39 @@ pnpm prisma migrate deploy
 
 ---
 
+## Makefile Commands
+
+A Makefile is included to simplify the most common development, testing and Docker operations.
+
+Display all available commands:
+
+```bash
+make help
+```
+
+Common commands:
+
+| Command              | Description                               |
+| -------------------- | ----------------------------------------- |
+| `make install`       | Install project dependencies              |
+| `make dev`           | Start the development server              |
+| `make build`         | Compile the TypeScript project            |
+| `make test`          | Run automated integration tests           |
+| `make test-coverage` | Generate the test coverage report         |
+| `make migrate`       | Apply Prisma migrations locally           |
+| `make config`        | Validate the Docker Compose configuration |
+| `make up`            | Build and start all containers            |
+| `make down`          | Stop all containers                       |
+| `make logs`          | Follow logs from all services             |
+| `make api-logs`      | Follow API logs                           |
+| `make migrator-logs` | Display migration logs                    |
+| `make ps`            | Display all containers and their status   |
+| `make db-shell`      | Open the PostgreSQL shell                 |
+| `make clean`         | Remove build and coverage output          |
+| `make rebuild`       | Stop, rebuild and restart the containers  |
+
+---
+
 ## Running with Docker
 
 The Docker environment contains three services:
