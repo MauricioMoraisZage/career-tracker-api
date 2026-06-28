@@ -1,169 +1,75 @@
 # Career Tracker API
 
-A production-oriented REST API for managing professional learning, saved job opportunities and job application workflows.
+A REST API for managing professional development, courses, learning modules, job opportunities, and job applications.
 
-The Career Tracker API helps users organize courses, track course modules, save job opportunities and manage applications through a secure and documented backend system.
+The project was built with a strong focus on layered architecture, secure authentication, data validation, automated testing, interactive documentation, and full Docker-based execution.
 
-## Project Status
+## Features
 
-The main API features are complete:
-
-* Authentication with JWT
-* Course management
+* User registration and authentication with JWT
+* Authenticated user profile retrieval
+* Complete course management
 * Course module management
 * Job opportunity management
-* Job application workflow
-* Automated integration tests
-* Swagger/OpenAPI documentation
-* Docker configuration for the API, PostgreSQL and Prisma migrations
+* Job searching, filtering, and pagination
+* Job application management
+* Automatic synchronization between applications and job status
+* Per-user resource ownership protection
+* Data validation with Zod
+* Automated integration testing
+* Interactive Swagger/OpenAPI documentation
+* PostgreSQL and API execution with Docker Compose
+* Automatic Prisma migrations on startup
 
-The remaining release steps are Docker runtime validation and production deployment.
-
----
-
-## Main Features
-
-### Authentication
-
-* User registration
-* User login
-* JWT-based authentication
-* Password hashing
-* Protected routes
-* Authenticated user profile
-
-### Courses
-
-* Create courses
-* List user-owned courses
-* Search and filter courses
-* Update course progress and status
-* Delete courses
-* Pagination support
-
-### Course Modules
-
-* Create modules inside courses
-* List modules in a defined order
-* Update module progress status
-* Delete course modules
-* Ownership validation through the related course
-
-### Jobs
-
-* Save job opportunities
-* Search by company, position or location
-* Filter by status and remote work
-* Update application progress
-* Delete job opportunities
-* Pagination support
-
-### Applications
-
-* Create one application per job
-* Save CV version, cover letter and notes
-* Prevent duplicate applications
-* Automatically update the related job to `APPLIED`
-* Reset the job to `SAVED` when an application is deleted
-* Keep job and application dates synchronized
-* Execute related changes through database transactions
-
-### Quality and Documentation
-
-* Integration tests with Vitest and Supertest
-* Dedicated PostgreSQL test database
-* Swagger UI
-* OpenAPI specification
-* Docker multi-stage build
-* Database and API health checks
-* Automatic Prisma migration service
-
----
-
-## Technology Stack
+## Technologies
 
 * Node.js
 * TypeScript
-* Express 5
-* PostgreSQL 16
-* Prisma ORM 7
-* Zod
-* JSON Web Token
+* Express
+* PostgreSQL
+* Prisma ORM
+* JWT
 * bcryptjs
+* Zod
 * Vitest
 * Supertest
-* Swagger UI
-* OpenAPI 3
+* Swagger / OpenAPI
 * Docker
 * Docker Compose
 * pnpm
 
----
-
 ## Architecture
 
-The project follows a layered architecture:
+The API follows a layered architecture:
 
 ```text
-HTTP Request
-     │
-     ▼
-Route
-     │
-     ▼
+Request
+   ↓
+Routes
+   ↓
 Validation Middleware
-     │
-     ▼
-Controller
-     │
-     ▼
-Service
-     │
-     ▼
-Repository
-     │
-     ▼
+   ↓
+Controllers
+   ↓
+Services
+   ↓
+Repositories
+   ↓
 Prisma ORM
-     │
-     ▼
+   ↓
 PostgreSQL
 ```
 
-### Responsibilities
+### Layer responsibilities
 
-* **Routes:** Define API endpoints and attach middleware.
-* **Validation:** Validate and transform external input with Zod.
-* **Controllers:** Handle HTTP requests and responses.
-* **Services:** Apply business rules and authorization checks.
-* **Repositories:** Execute database queries.
-* **Prisma:** Maps application entities to PostgreSQL tables.
-* **Error middleware:** Produces consistent API error responses.
+* **Routes:** define endpoints and middlewares.
+* **Validation:** validates request bodies and query parameters.
+* **Controllers:** receive HTTP requests and return HTTP responses.
+* **Services:** contain business rules.
+* **Repositories:** execute database operations.
+* **Prisma:** communicates with PostgreSQL.
 
----
-
-## Data Model
-
-```text
-User
-├── Courses
-│   └── Course Modules
-└── Jobs
-    └── Application
-```
-
-### Main Relationships
-
-* A user can own multiple courses.
-* A course can contain multiple modules.
-* A user can save multiple job opportunities.
-* A job can have zero or one application.
-* Deleting a user removes their related resources.
-* Deleting a course removes its modules.
-* Deleting a job removes its application.
-
----
-
-## Project Structure
+## Project structure
 
 ```text
 career-tracker-api/
@@ -190,9 +96,9 @@ career-tracker-api/
 ├── .dockerignore
 ├── .env.example
 ├── .env.test.example
-├── .gitignore
-├── docker-compose.yml
+├── compose.yaml
 ├── Dockerfile
+├── Makefile
 ├── package.json
 ├── pnpm-lock.yaml
 ├── prisma.config.ts
@@ -200,64 +106,153 @@ career-tracker-api/
 └── vitest.config.ts
 ```
 
----
+## Main models
+
+```text
+User
+ ├── Courses
+ │    └── Course Modules
+ └── Jobs
+      └── Application
+```
+
+### Important business rules
+
+* Every resource belongs to an authenticated user.
+* Users cannot access or modify resources owned by other users.
+* A job can have at most one application.
+* Creating an application automatically changes the related job status to `APPLIED`.
+* Deleting an application resets the related job status to `SAVED`.
+* Related operations are executed with Prisma transactions.
 
 ## Requirements
 
-For local development:
+For Docker-based execution:
 
-* Node.js 24 or newer
-* pnpm
 * Docker
 * Docker Compose
+* Make
 
-Check the installed versions:
+For local execution:
 
-```bash
-node --version
-pnpm --version
-docker --version
-docker compose version
-```
+* Node.js 22+
+* pnpm 11+
+* PostgreSQL
 
----
+## Environment variables
 
-## Environment Variables
-
-Create a local environment file:
-
-```bash
-cp .env.example .env
-```
-
-Example configuration:
+Create a `.env` file in the project root:
 
 ```env
-NODE_ENV=development
 PORT=3000
-
-DATABASE_URL="postgresql://career_user:career_password@localhost:5432/career_tracker_db?schema=public"
-
-JWT_SECRET=replace_this_with_a_long_random_secret
-JWT_EXPIRES_IN=1h
+NODE_ENV=development
 
 POSTGRES_USER=career_user
-POSTGRES_PASSWORD=career_password
-POSTGRES_DB=career_tracker_db
+POSTGRES_PASSWORD=career_pass
+POSTGRES_DB=career_db
+POSTGRES_PORT=5432
+
+DATABASE_URL=postgresql://career_user:career_pass@localhost:5432/career_db?schema=public
+
+JWT_SECRET=replace_with_a_secure_random_secret
+JWT_EXPIRES_IN=1d
 ```
 
-Do not commit the `.env` file.
+Never commit the `.env` file.
 
----
+An example file is available at:
 
-## Local Installation
+```text
+.env.example
+```
 
-Clone the repository:
+## Running with Docker
+
+The recommended way to run the project is with Docker Compose.
+
+### Build and start
 
 ```bash
-git clone git@github.com:MauricioMoraisZage/career-tracker-api.git
-cd career-tracker-api
+make rebuild
 ```
+
+Or directly:
+
+```bash
+docker compose up --build -d
+```
+
+This command:
+
+1. builds the API image;
+2. starts PostgreSQL;
+3. waits for the database to become healthy;
+4. applies Prisma migrations;
+5. starts the API.
+
+### Check container status
+
+```bash
+make ps
+```
+
+Expected:
+
+```text
+career_tracker_database   healthy
+career_tracker_api        healthy
+```
+
+### View logs
+
+```bash
+make logs
+```
+
+API logs:
+
+```bash
+make logs-api
+```
+
+Database logs:
+
+```bash
+make logs-db
+```
+
+### Stop containers
+
+```bash
+make down
+```
+
+### Remove containers and volume
+
+```bash
+make clean
+```
+
+> Warning: `make clean` also deletes the PostgreSQL data volume.
+
+## Makefile commands
+
+```text
+make help       Show available commands
+make up         Start containers
+make build      Build Docker images
+make rebuild    Rebuild and start containers
+make down       Stop containers
+make restart    Restart containers
+make logs       Show all logs
+make logs-api   Show API logs
+make logs-db    Show PostgreSQL logs
+make ps         Show container status
+make test       Run build and tests
+make clean      Remove containers, networks, and database volume
+```
+
+## Running locally
 
 Install dependencies:
 
@@ -265,25 +260,19 @@ Install dependencies:
 pnpm install
 ```
 
-Start only PostgreSQL:
-
-```bash
-docker compose up -d database
-```
-
-Generate the Prisma Client:
+Generate Prisma Client:
 
 ```bash
 pnpm prisma generate
 ```
 
-Apply the existing migrations:
+Apply migrations:
 
 ```bash
 pnpm prisma migrate deploy
 ```
 
-Start the development server:
+Start in development mode:
 
 ```bash
 pnpm dev
@@ -295,566 +284,225 @@ The API will be available at:
 http://localhost:3000
 ```
 
----
-
-## Development Commands
-
-Start the development server:
-
-```bash
-pnpm dev
-```
-
-Build the TypeScript project:
+## Production build
 
 ```bash
 pnpm build
-```
-
-Start the compiled application:
-
-```bash
 pnpm start
 ```
 
-Generate the Prisma Client:
-
-```bash
-pnpm prisma generate
-```
-
-Create a development migration:
-
-```bash
-pnpm prisma migrate dev --name migration_name
-```
-
-Apply committed migrations:
-
-```bash
-pnpm prisma migrate deploy
-```
-
----
-
-## Makefile Commands
-
-A Makefile is included to simplify the most common development, testing and Docker operations.
-
-Display all available commands:
-
-```bash
-make help
-```
-
-Common commands:
-
-| Command              | Description                               |
-| -------------------- | ----------------------------------------- |
-| `make install`       | Install project dependencies              |
-| `make dev`           | Start the development server              |
-| `make build`         | Compile the TypeScript project            |
-| `make test`          | Run automated integration tests           |
-| `make test-coverage` | Generate the test coverage report         |
-| `make migrate`       | Apply Prisma migrations locally           |
-| `make config`        | Validate the Docker Compose configuration |
-| `make up`            | Build and start all containers            |
-| `make down`          | Stop all containers                       |
-| `make logs`          | Follow logs from all services             |
-| `make api-logs`      | Follow API logs                           |
-| `make migrator-logs` | Display migration logs                    |
-| `make ps`            | Display all containers and their status   |
-| `make db-shell`      | Open the PostgreSQL shell                 |
-| `make clean`         | Remove build and coverage output          |
-| `make rebuild`       | Stop, rebuild and restart the containers  |
-
----
-
-## Running with Docker
-
-The Docker environment contains three services:
-
-```text
-database
-migrator
-api
-```
-
-* `database` runs PostgreSQL.
-* `migrator` applies Prisma migrations and exits.
-* `api` runs the compiled production application.
-
-Build and start the complete environment:
-
-```bash
-docker compose up --build
-```
-
-Start in detached mode:
-
-```bash
-docker compose up -d --build
-```
-
-Check service status:
-
-```bash
-docker compose ps
-```
-
-View API logs:
-
-```bash
-docker compose logs -f api
-```
-
-View migration logs:
-
-```bash
-docker compose logs migrator
-```
-
-Stop the environment:
-
-```bash
-docker compose down
-```
-
-Do not use the following command unless you intentionally want to delete the PostgreSQL volume:
-
-```bash
-docker compose down -v
-```
-
----
-
-## API Documentation
-
-Swagger UI is available at:
-
-```text
-http://localhost:3000/api-docs
-```
-
-The raw OpenAPI specification is available at:
-
-```text
-http://localhost:3000/openapi.json
-```
-
-Swagger UI supports:
-
-* Endpoint exploration
-* Request body examples
-* Query and path parameters
-* Response schemas
-* JWT Bearer authentication
-* Interactive API requests
-
-### Using JWT in Swagger
-
-1. Execute `POST /auth/login`.
-2. Copy the returned token.
-3. Click **Authorize**.
-4. Paste only the token.
-5. Confirm authorization.
-6. Execute protected endpoints.
-
----
-
-## Health Checks
-
-Check the API:
-
-```bash
-curl http://localhost:3000/health
-```
-
-Check the database connection:
-
-```bash
-curl http://localhost:3000/db-health
-```
-
----
-
-## API Endpoints
-
-### Health
-
-| Method | Endpoint     | Description                 |
-| ------ | ------------ | --------------------------- |
-| GET    | `/health`    | Check API health            |
-| GET    | `/db-health` | Check database connectivity |
-
-### Authentication
-
-| Method | Endpoint         | Description                    |
-| ------ | ---------------- | ------------------------------ |
-| POST   | `/auth/register` | Register a user                |
-| POST   | `/auth/login`    | Authenticate and receive a JWT |
-
-### Users
-
-| Method | Endpoint    | Description                   |
-| ------ | ----------- | ----------------------------- |
-| GET    | `/users/me` | Return the authenticated user |
-
-### Courses
-
-| Method | Endpoint       | Description             |
-| ------ | -------------- | ----------------------- |
-| POST   | `/courses`     | Create a course         |
-| GET    | `/courses`     | List user-owned courses |
-| GET    | `/courses/:id` | Return one course       |
-| PATCH  | `/courses/:id` | Update a course         |
-| DELETE | `/courses/:id` | Delete a course         |
-
-### Course Modules
-
-| Method | Endpoint                     | Description              |
-| ------ | ---------------------------- | ------------------------ |
-| POST   | `/courses/:courseId/modules` | Create a course module   |
-| GET    | `/courses/:courseId/modules` | List course modules      |
-| GET    | `/course-modules/:id`        | Return one course module |
-| PATCH  | `/course-modules/:id`        | Update a course module   |
-| DELETE | `/course-modules/:id`        | Delete a course module   |
-
-### Jobs
-
-| Method | Endpoint    | Description              |
-| ------ | ----------- | ------------------------ |
-| POST   | `/jobs`     | Create a job opportunity |
-| GET    | `/jobs`     | List job opportunities   |
-| GET    | `/jobs/:id` | Return one job           |
-| PATCH  | `/jobs/:id` | Update a job             |
-| DELETE | `/jobs/:id` | Delete a job             |
-
-### Applications
-
-| Method | Endpoint                   | Description                     |
-| ------ | -------------------------- | ------------------------------- |
-| POST   | `/jobs/:jobId/application` | Create an application for a job |
-| GET    | `/applications`            | List applications               |
-| GET    | `/applications/:id`        | Return one application          |
-| PATCH  | `/applications/:id`        | Update an application           |
-| DELETE | `/applications/:id`        | Delete an application           |
-
----
-
-## Query Parameters
-
-### Courses
-
-```http
-GET /courses?status=in_progress&q=backend&page=1&limit=10
-```
-
-Supported parameters:
-
-| Parameter | Type    | Description               |
-| --------- | ------- | ------------------------- |
-| `status`  | string  | Filter by course status   |
-| `q`       | string  | Search course information |
-| `page`    | integer | Page number               |
-| `limit`   | integer | Results per page          |
-
-Course statuses:
-
-```text
-not_started
-in_progress
-completed
-```
-
-### Jobs
-
-```http
-GET /jobs?status=applied&remote=true&q=backend&page=1&limit=10
-```
-
-Supported parameters:
-
-| Parameter | Type    | Description                          |
-| --------- | ------- | ------------------------------------ |
-| `status`  | string  | Filter by job status                 |
-| `remote`  | boolean | Filter remote opportunities          |
-| `q`       | string  | Search company, position or location |
-| `page`    | integer | Page number                          |
-| `limit`   | integer | Results per page                     |
-
-Job statuses:
-
-```text
-saved
-applied
-interview
-rejected
-offer
-```
-
-### Applications
-
-```http
-GET /applications?page=1&limit=10
-```
-
----
-
-## Authentication Example
-
-Register a user:
-
-```bash
-curl -X POST http://localhost:3000/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Mauricio Morais",
-    "email": "mauricio@example.com",
-    "password": "strong-password"
-  }'
-```
-
-Login:
-
-```bash
-curl -X POST http://localhost:3000/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "mauricio@example.com",
-    "password": "strong-password"
-  }'
-```
-
-Use the returned token:
-
-```bash
-curl http://localhost:3000/users/me \
-  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
-```
-
----
-
-## Automated Tests
-
-The project uses:
-
-* Vitest as the test runner
-* Supertest for HTTP integration tests
-* A dedicated PostgreSQL test database
-* Automatic database cleanup between tests
-
-### Test Environment
-
-Create the test environment file:
-
-```bash
-cp .env.test.example .env.test
-```
-
-Example:
-
-```env
-NODE_ENV=test
-PORT=3001
-
-DATABASE_URL="postgresql://career_user:career_password@localhost:5432/career_tracker_test_db?schema=public"
-
-JWT_SECRET=career_tracker_test_secret
-JWT_EXPIRES_IN=1h
-```
-
-Create the test database:
-
-```bash
-docker exec career_tracker_database \
-  psql -U career_user -d postgres \
-  -c "CREATE DATABASE career_tracker_test_db;"
-```
-
-Apply migrations:
+The TypeScript source code is compiled into the `dist` directory.
+
+## Automated tests
+
+The project includes integration tests for:
+
+* user registration and login;
+* JWT authentication;
+* protected routes;
+* courses;
+* course modules;
+* jobs;
+* searching and filtering;
+* pagination;
+* resource ownership;
+* applications;
+* duplicate application prevention;
+* transactions;
+* automatic job status synchronization.
+
+### Prepare the test database
 
 ```bash
 pnpm test:migrate
 ```
 
-Run all tests:
+### Run tests
 
 ```bash
 pnpm test
 ```
 
-Run in watch mode:
+### Run in watch mode
 
 ```bash
 pnpm test:watch
 ```
 
-Generate a coverage report:
+### Generate coverage
 
 ```bash
 pnpm test:coverage
 ```
 
-### Covered Scenarios
+## API documentation
 
-* User registration
-* Duplicate email rejection
-* Login
-* Invalid credentials
-* Protected route access
-* Course CRUD
-* Course ownership
-* Course module lifecycle
-* Job CRUD
-* Job searching and filtering
-* Pagination
-* Application creation
-* Duplicate application prevention
-* Transactional job status synchronization
-* Application deletion
-* Cross-user resource protection
+Interactive API documentation is available at:
 
----
+```text
+http://localhost:3000/api-docs
+```
 
-## Validation and Error Handling
+The OpenAPI JSON specification is available at:
 
-Incoming data is validated with Zod.
+```text
+http://localhost:3000/openapi.json
+```
 
-Example validation error:
+Using Swagger UI, you can:
+
+1. register a user;
+2. log in;
+3. copy the JWT token;
+4. click `Authorize`;
+5. test protected endpoints.
+
+## Health checks
+
+### API health
+
+```http
+GET /health
+```
+
+Example response:
 
 ```json
 {
-  "status": "error",
-  "message": "Validation failed",
-  "errors": [
-    {
-      "field": "email",
-      "message": "Invalid email address"
-    }
-  ]
+  "status": "ok",
+  "message": "Career Tracker API is running"
 }
 ```
 
-Example resource error:
+### Database health
+
+```http
+GET /db-health
+```
+
+Example response:
 
 ```json
 {
-  "status": "error",
-  "message": "Job not found"
+  "status": "ok",
+  "database": "connected",
+  "usersCount": 0
 }
 ```
 
-The API uses standard HTTP status codes:
+## Endpoints
 
-| Status | Meaning                            |
-| ------ | ---------------------------------- |
-| `200`  | Successful request                 |
-| `201`  | Resource created                   |
-| `400`  | Invalid request data               |
-| `401`  | Authentication required or invalid |
-| `404`  | Resource not found                 |
-| `409`  | Resource conflict                  |
-| `500`  | Internal server error              |
+### Authentication
 
----
+```http
+POST /auth/register
+POST /auth/login
+```
 
-## Security Decisions
+### Users
 
-* Passwords are hashed before storage.
-* JWT is required for protected endpoints.
-* Secrets are loaded through environment variables.
-* Users can only access their own resources.
-* Ownership is validated in the service and repository layers.
-* Validation occurs before business logic.
-* Password fields are not returned in API responses.
-* Test data is isolated from development data.
-* Docker images exclude environment files.
-* Application and job updates use database transactions where consistency is required.
+```http
+GET /users/me
+```
 
----
+### Courses
 
-## Important Business Rules
-
-### Resource Ownership
-
-A user cannot access courses, modules, jobs or applications owned by another user.
-
-For protected resources, unauthorized ownership access returns `404` instead of exposing whether the resource exists.
+```http
+POST   /courses
+GET    /courses
+GET    /courses/:id
+PATCH  /courses/:id
+DELETE /courses/:id
+```
 
 ### Course Modules
 
-Course modules are always accessed through a course owned by the authenticated user.
+```http
+POST   /courses/:courseId/modules
+GET    /courses/:courseId/modules
+GET    /course-modules/:id
+PATCH  /course-modules/:id
+DELETE /course-modules/:id
+```
+
+### Jobs
+
+```http
+POST   /jobs
+GET    /jobs
+GET    /jobs/:id
+PATCH  /jobs/:id
+DELETE /jobs/:id
+```
+
+Filter example:
+
+```http
+GET /jobs?status=applied&remote=true&q=backend&page=1&limit=10
+```
 
 ### Applications
 
-A job can have at most one application.
-
-Creating an application:
-
-```text
-Application created
-        +
-Job status changed to APPLIED
+```http
+POST   /jobs/:jobId/application
+GET    /applications
+GET    /applications/:id
+PATCH  /applications/:id
+DELETE /applications/:id
 ```
 
-Deleting an application:
+## Available statuses
+
+### Courses and modules
 
 ```text
-Application deleted
-        +
-Job status changed to SAVED
-        +
-Job appliedAt cleared
+NOT_STARTED
+IN_PROGRESS
+COMPLETED
 ```
 
-These related operations use Prisma transactions.
+### Jobs
 
----
+```text
+SAVED
+APPLIED
+INTERVIEW
+REJECTED
+OFFER
+```
 
-## Future Improvements
+## Security
 
-* Production deployment
-* Continuous integration with GitHub Actions
-* Refresh tokens
-* Email verification
-* Password recovery
-* Job interview scheduling
-* Application activity history
-* Career analytics dashboard
-* Notification system
-* Rate limiting
-* Structured application logging
-* API versioning
+* Passwords are stored using bcrypt hashes.
+* Authentication is based on JWT.
+* Private routes are protected by middleware.
+* Resource ownership is validated.
+* Request data is validated with Zod.
+* Sensitive variables are kept outside Git.
+* The test database is separate from the main database.
+* Password hashes are never exposed in responses.
+* Transactions prevent partial updates.
 
----
+## Checking the database inside Docker
+
+```bash
+docker compose exec database \
+  psql -U career_user -d career_db -c "\dt"
+```
+
+Expected tables:
+
+```text
+_prisma_migrations
+users
+courses
+course_modules
+jobs
+applications
+```
 
 ## Author
 
 **Mauricio Morais Zage**
 
-Backend Developer focused on Node.js, TypeScript, PostgreSQL, Prisma, Express and Docker.
-
-GitHub:
-
-```text
-https://github.com/MauricioMoraisZage
-```
-
----
-
-## Portfolio Purpose
-
-This project was developed to demonstrate practical backend engineering skills, including:
-
-* REST API design
-* Authentication and authorization
-* Relational database modeling
-* Layered backend architecture
-* Input validation
-* Business rule implementation
-* Transaction management
-* Automated integration testing
-* API documentation
-* Containerization
-* Production-oriented project organization
+Backend Developer focused on Node.js, TypeScript, PostgreSQL, Prisma, REST APIs, automated testing, and Docker.
