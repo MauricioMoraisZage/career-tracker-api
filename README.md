@@ -1,8 +1,21 @@
 # Career Tracker API
 
+[![CI](https://github.com/MauricioMoraisZage/career-tracker-api/actions/workflows/ci.yml/badge.svg)](https://github.com/MauricioMoraisZage/career-tracker-api/actions/workflows/ci.yml)
+[![Live API](https://img.shields.io/badge/API-Live-success)](https://career-tracker-api-pxhr.onrender.com/health)
+[![Swagger](https://img.shields.io/badge/API-Swagger-85EA2D)](https://career-tracker-api-pxhr.onrender.com/api-docs)
+
 A REST API for managing professional development, courses, learning modules, job opportunities, and job applications.
 
 The project was built with a strong focus on layered architecture, secure authentication, data validation, automated testing, interactive documentation, and full Docker-based execution.
+
+## Live Deployment
+
+- **API:** https://career-tracker-api-pxhr.onrender.com
+- **Swagger Documentation:** https://career-tracker-api-pxhr.onrender.com/api-docs
+- **API Health:** https://career-tracker-api-pxhr.onrender.com/health
+- **Database Health:** https://career-tracker-api-pxhr.onrender.com/db-health
+
+> The free hosting instance may take a short time to respond after a period of inactivity.
 
 ## Features
 
