@@ -1,0 +1,76 @@
+name: Career Tracker API CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - "feature/**"
+
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build-and-test:
+    name: Build and integration tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+
+        env:
+          POSTGRES_USER: career_user
+          POSTGRES_PASSWORD: career_pass
+          POSTGRES_DB: career_test_db
+
+        ports:
+          - 5432:5432
+
+        options: >-
+          --health-cmd="pg_isready -U career_user -d career_test_db"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      NODE_ENV: test
+      PORT: 3001
+
+      DATABASE_URL: postgresql://career_user:career_pass@localhost:5432/career_test_db?schema=public
+
+      JWT_SECRET: github_actions_test_secret
+      JWT_EXPIRES_IN: 1h
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Set up pnpm
+        run: corepack prepare pnpm@11.3.0 --activate
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: pnpm prisma generate
+
+      - name: Apply database migrations
+        run: pnpm prisma migrate deploy
+
+      - name: Build project
+        run: pnpm build
+
+      - name: Run integration tests
+        run: pnpm test
