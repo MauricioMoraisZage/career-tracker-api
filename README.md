@@ -1,5 +1,7 @@
 # Career Tracker API
 
+[![CI](https://github.com/MauricioMoraisZage/career-tracker-api/actions/workflows/ci.yml/badge.svg)](https://github.com/MauricioMoraisZage/career-tracker-api/actions/workflows/ci.yml)
+
 A REST API for managing professional development, courses, learning modules, job opportunities, and job applications.
 
 The project was built with a strong focus on layered architecture, secure authentication, data validation, automated testing, interactive documentation, and full Docker-based execution.
