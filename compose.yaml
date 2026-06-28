@@ -1,0 +1,56 @@
+services:
+  database:
+    image: postgres:16-alpine
+    container_name: career_tracker_database
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-career_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-career_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-career_db}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - career_tracker_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-career_user} -d ${POSTGRES_DB:-career_db}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: career_tracker_api
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-career_user}:${POSTGRES_PASSWORD:-career_pass}@database:5432/${POSTGRES_DB:-career_db}?schema=public
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-1d}
+    ports:
+      - "${PORT:-3000}:3000"
+    depends_on:
+      database:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://localhost:3000/health').then(r => { if (!r.ok) process.exit(1) }).catch(() => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    restart: unless-stopped
+
+volumes:
+  career_tracker_postgres_data:
+    name: career_tracker_postgres_data
