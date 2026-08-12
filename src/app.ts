@@ -60,3 +60,4 @@ app.use("/jobs", jobRoutes);
 app.use("/applications", applicationRoutes);
 
 app.use(errorMiddleware);
+export default app;
