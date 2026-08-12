@@ -26,7 +26,12 @@ app.get("/", (_request, response) => {
 
 app.get("/openapi.json", (_request, response) => { return response.status(200).json(swaggerSpecification) });
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecification));
+app.use("/api-docs", swaggerUi.serve);
+app.get("/api-docs",
+  swaggerUi.setup(swaggerSpecification, {
+    swaggerOptions: { url: "/openapi.json" }
+  })
+);
 
 /**
  * @openapi
