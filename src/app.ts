@@ -14,6 +14,16 @@ export const app = express();
 
 app.use(express.json());
 
+app.get("/", (_request, response) => {
+  return response.status(200).json({
+    status: "ok",
+    message: "Career Tracker API",
+    documentation: "https://career-tracker-api.vercel.app/api-docs",
+    health: "https://career-tracker-api.vercel.app/health",
+    databaseHealth: "https://career-tracker-api.vercel.app/db-health"
+  });
+});
+
 app.get("/openapi.json", (_request, response) => { return response.status(200).json(swaggerSpecification) });
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecification));
