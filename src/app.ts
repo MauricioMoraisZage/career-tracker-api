@@ -7,7 +7,6 @@ import { courseRoutes } from "./routes/course.routes.js";
 import { courseModuleRoutes } from "./routes/course-module.routes.js";
 import { jobRoutes } from "./routes/job.routes.js";
 import { applicationRoutes } from "./routes/application.routes.js";
-import swaggerUi from "swagger-ui-express";
 import { swaggerSpecification } from "./docs/swagger.js";
 
 export const app = express();
@@ -26,12 +25,41 @@ app.get("/", (_request, response) => {
 
 app.get("/openapi.json", (_request, response) => { return response.status(200).json(swaggerSpecification) });
 
-app.use("/api-docs", swaggerUi.serve);
-app.get("/api-docs",
-  swaggerUi.setup(swaggerSpecification, {
-    swaggerOptions: { url: "/openapi.json" }
-  })
-);
+const swaggerHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Career Tracker API — Swagger</title>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css"
+  />
+</head>
+<body>
+  <div id="swagger-ui"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script>
+    window.onload = () => {
+      SwaggerUIBundle({
+        url: "/openapi.json",
+        dom_id: "#swagger-ui",
+        deepLinking: true,
+        persistAuthorization: true,
+        displayRequestDuration: true
+      });
+    };
+  </script>
+</body>
+</html>`;
+
+app.get(["/api-docs", "/api-docs/"], (_request, response) => {
+  return response
+    .status(200)
+    .type("html")
+    .send(swaggerHtml);
+});
 
 /**
  * @openapi
