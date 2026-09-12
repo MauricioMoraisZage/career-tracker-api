@@ -1,6 +1,6 @@
+import { createRequire } from "node:module";
 import cors from "cors";
 import express from "express";
-import helmet from "helmet";
 import { prisma } from "./lib/prisma.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
 import { authRoutes } from "./routes/auth.routes.js";
@@ -12,6 +12,12 @@ import { applicationRoutes } from "./routes/application.routes.js";
 import { swaggerSpecification } from "./docs/swagger.js";
 import { authRateLimiter } from "./middlewares/auth-rate-limit.middleware.js";
 import { httpLogger } from "./lib/logger.js";
+
+const require = createRequire(import.meta.url);
+
+const helmet = require("helmet") as (options?: {
+  contentSecurityPolicy?: boolean;
+}) => import("express").RequestHandler;
 
 export const app = express();
 
