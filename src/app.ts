@@ -1,4 +1,6 @@
+import cors from "cors";
 import express from "express";
+import helmet from "helmet";
 import { prisma } from "./lib/prisma.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
 import { authRoutes } from "./routes/auth.routes.js";
@@ -8,10 +10,45 @@ import { courseModuleRoutes } from "./routes/course-module.routes.js";
 import { jobRoutes } from "./routes/job.routes.js";
 import { applicationRoutes } from "./routes/application.routes.js";
 import { swaggerSpecification } from "./docs/swagger.js";
+import { authRateLimiter } from "./middlewares/auth-rate-limit.middleware.js";
+import { httpLogger } from "./lib/logger.js";
 
 export const app = express();
 
-app.use(express.json());
+function getAllowedOrigins() {
+  return (process.env.CORS_ORIGINS ?? "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+}
+
+app.use(httpLogger);
+
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  }),
+);
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      const allowedOrigins = getAllowedOrigins();
+
+      if (
+        !origin ||
+        allowedOrigins.length === 0 ||
+        allowedOrigins.includes(origin)
+      ) {
+        return callback(null, true);
+      }
+
+      return callback(null, false);
+    },
+  }),
+);
+
+app.use(express.json({ limit: "1mb" }));
 
 app.get("/", (_request, response) => {
   return response.status(200).json({
@@ -95,7 +132,8 @@ app.get("/db-health", async (_request, response) => {
     status: "ok", database: "connected", usersCount });
 });
 
-app.use("/auth", authRoutes);
+//app.use("/auth", authRoutes);
+app.use("/auth", authRateLimiter, authRoutes);
 app.use("/users", userRoutes);
 app.use("/courses", courseRoutes);
 app.use("/course-modules", courseModuleRoutes);
