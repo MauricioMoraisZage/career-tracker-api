@@ -8,3 +8,4 @@ coverage/
 .DS_Store
 
 src/generated/prisma/
+.pnpm-store/

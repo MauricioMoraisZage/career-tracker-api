@@ -1,9 +1,10 @@
 import type { ErrorRequestHandler } from "express";
 import { AppError } from "../errors/app-error.js";
+import { logger } from "../lib/logger.js";
 
 export const errorMiddleware: ErrorRequestHandler = (
   error,
-  _request,
+  request,
   response,
   _next,
 ) => {
@@ -14,7 +15,11 @@ export const errorMiddleware: ErrorRequestHandler = (
     });
   }
 
-  console.error(error);
+  request.log?.error({ err: error }, "Unhandled request error");
+
+  if (!request.log) {
+    logger.error({ err: error }, "Unhandled request error");
+  }
 
   return response.status(500).json({
     status: "error",
