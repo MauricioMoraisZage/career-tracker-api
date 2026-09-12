@@ -46,7 +46,6 @@ courseModuleRoutes.use(authMiddleware);
  */
 courseModuleRoutes.get("/:id", courseModuleController.findOne);
 
-
 /**
  * @openapi
  * /course-modules/{id}:
@@ -93,9 +92,11 @@ courseModuleRoutes.get("/:id", courseModuleController.findOne);
  *       404:
  *         description: Course module not found
  */
-courseModuleRoutes.patch("/:id", validateBody(updateCourseModuleSchema),
-  courseModuleController.update);
-
+courseModuleRoutes.patch(
+  "/:id",
+  validateBody(updateCourseModuleSchema),
+  courseModuleController.update,
+);
 
 /**
  * @openapi

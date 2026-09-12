@@ -1,9 +1,14 @@
 import { Router } from "express";
 import { JobController } from "../controllers/job.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
-import { validateBody, validateQuery } from "../middlewares/validate.middleware.js";
 import {
-  createJobSchema, listJobsQuerySchema, updateJobSchema,
+  validateBody,
+  validateQuery,
+} from "../middlewares/validate.middleware.js";
+import {
+  createJobSchema,
+  listJobsQuerySchema,
+  updateJobSchema,
 } from "../validations/job.schema.js";
 import { ApplicationController } from "../controllers/application.controller.js";
 import { createApplicationSchema } from "../validations/application.schema.js";
@@ -52,7 +57,6 @@ jobRoutes.use(authMiddleware);
  *         description: Authentication required
  */
 jobRoutes.post("/", validateBody(createJobSchema), jobController.create);
-
 
 /**
  * @openapi
@@ -162,8 +166,11 @@ jobRoutes.get("/", validateQuery(listJobsQuerySchema), jobController.list);
  *       409:
  *         description: Application already exists for this job
  */
-jobRoutes.post("/:jobId/application", validateBody(createApplicationSchema), applicationController.create);
-
+jobRoutes.post(
+  "/:jobId/application",
+  validateBody(createApplicationSchema),
+  applicationController.create,
+);
 
 /**
  * @openapi
@@ -200,7 +207,6 @@ jobRoutes.post("/:jobId/application", validateBody(createApplicationSchema), app
  *         description: Job not found
  */
 jobRoutes.get("/:id", jobController.findOne);
-
 
 /**
  * @openapi
@@ -248,7 +254,6 @@ jobRoutes.get("/:id", jobController.findOne);
  *         description: Job not found
  */
 jobRoutes.patch("/:id", validateBody(updateJobSchema), jobController.update);
-
 
 /**
  * @openapi

@@ -1,8 +1,15 @@
 import { Router } from "express";
 import { CourseController } from "../controllers/course.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
-import { validateBody, validateQuery } from "../middlewares/validate.middleware.js";
-import { createCourseSchema, listCoursesQuerySchema, updateCourseSchema } from "../validations/course.schema.js";
+import {
+  validateBody,
+  validateQuery,
+} from "../middlewares/validate.middleware.js";
+import {
+  createCourseSchema,
+  listCoursesQuerySchema,
+  updateCourseSchema,
+} from "../validations/course.schema.js";
 import { CourseModuleController } from "../controllers/course-module.controller.js";
 import { createCourseModuleSchema } from "../validations/course-module.schema.js";
 
@@ -57,8 +64,11 @@ courseRoutes.use(authMiddleware);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-courseRoutes.post("/", validateBody(createCourseSchema), courseController.create);
-
+courseRoutes.post(
+  "/",
+  validateBody(createCourseSchema),
+  courseController.create,
+);
 
 /**
  * @openapi
@@ -119,8 +129,11 @@ courseRoutes.post("/", validateBody(createCourseSchema), courseController.create
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-courseRoutes.get("/", validateQuery(listCoursesQuerySchema), courseController.list);
-
+courseRoutes.get(
+  "/",
+  validateQuery(listCoursesQuerySchema),
+  courseController.list,
+);
 
 /**
  * @openapi
@@ -168,8 +181,11 @@ courseRoutes.get("/", validateQuery(listCoursesQuerySchema), courseController.li
  *       404:
  *         description: Course not found
  */
-courseRoutes.post("/:courseId/modules", validateBody(createCourseModuleSchema), courseModuleController.create);
-
+courseRoutes.post(
+  "/:courseId/modules",
+  validateBody(createCourseModuleSchema),
+  courseModuleController.create,
+);
 
 /**
  * @openapi
@@ -209,7 +225,6 @@ courseRoutes.post("/:courseId/modules", validateBody(createCourseModuleSchema), 
  *         description: Course not found
  */
 courseRoutes.get("/:courseId/modules", courseModuleController.list);
-
 
 /**
  * @openapi
@@ -251,7 +266,6 @@ courseRoutes.get("/:courseId/modules", courseModuleController.list);
  *               $ref: '#/components/schemas/ErrorResponse'
  */
 courseRoutes.get("/:id", courseController.findOne);
-
 
 /**
  * @openapi
@@ -299,8 +313,11 @@ courseRoutes.get("/:id", courseController.findOne);
  *       404:
  *         description: Course not found
  */
-courseRoutes.patch("/:id", validateBody(updateCourseSchema), courseController.update);
-
+courseRoutes.patch(
+  "/:id",
+  validateBody(updateCourseSchema),
+  courseController.update,
+);
 
 /**
  * @openapi

@@ -630,7 +630,8 @@ const swaggerOptions = {
             },
             coverLetter: {
               type: "string",
-              example: "Application focused on my backend development experience.",
+              example:
+                "Application focused on my backend development experience.",
             },
             notes: {
               type: "string",

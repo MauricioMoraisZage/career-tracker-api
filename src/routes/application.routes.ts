@@ -1,9 +1,13 @@
 import { Router } from "express";
 import { ApplicationController } from "../controllers/application.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
-import { validateBody, validateQuery } from "../middlewares/validate.middleware.js";
 import {
-  listApplicationsQuerySchema, updateApplicationSchema,
+  validateBody,
+  validateQuery,
+} from "../middlewares/validate.middleware.js";
+import {
+  listApplicationsQuerySchema,
+  updateApplicationSchema,
 } from "../validations/application.schema.js";
 
 const applicationRoutes = Router();
@@ -54,9 +58,11 @@ applicationRoutes.use(authMiddleware);
  *       401:
  *         description: Authentication required
  */
-applicationRoutes.get("/", validateQuery(listApplicationsQuerySchema),
-  applicationController.list);
-
+applicationRoutes.get(
+  "/",
+  validateQuery(listApplicationsQuerySchema),
+  applicationController.list,
+);
 
 /**
  * @openapi
@@ -93,7 +99,6 @@ applicationRoutes.get("/", validateQuery(listApplicationsQuerySchema),
  *         description: Application not found
  */
 applicationRoutes.get("/:id", applicationController.findOne);
-
 
 /**
  * @openapi
@@ -140,9 +145,11 @@ applicationRoutes.get("/:id", applicationController.findOne);
  *       404:
  *         description: Application not found
  */
-applicationRoutes.patch("/:id", validateBody(updateApplicationSchema),
-  applicationController.update);
-
+applicationRoutes.patch(
+  "/:id",
+  validateBody(updateApplicationSchema),
+  applicationController.update,
+);
 
 /**
  * @openapi

@@ -2,10 +2,7 @@ import request from "supertest";
 import { describe, expect, it } from "vitest";
 import { app } from "../../src/app.js";
 
-function restoreEnv(
-  name: string,
-  previousValue: string | undefined,
-) {
+function restoreEnv(name: string, previousValue: string | undefined) {
   if (previousValue === undefined) {
     delete process.env[name];
     return;
@@ -22,9 +19,7 @@ describe("Security middleware integration tests", () => {
     expect(response.headers["x-content-type-options"]).toBe("nosniff");
     expect(response.headers["x-frame-options"]).toBe("SAMEORIGIN");
     expect(response.headers["referrer-policy"]).toBe("no-referrer");
-    expect(response.headers["strict-transport-security"]).toContain(
-      "max-age=",
-    );
+    expect(response.headers["strict-transport-security"]).toContain("max-age=");
   });
 
   it("should generate a request id", async () => {
@@ -53,9 +48,7 @@ describe("Security middleware integration tests", () => {
     process.env.CORS_ORIGINS = origin;
 
     try {
-      const response = await request(app)
-        .get("/health")
-        .set("Origin", origin);
+      const response = await request(app).get("/health").set("Origin", origin);
 
       expect(response.status).toBe(200);
       expect(response.headers["access-control-allow-origin"]).toBe(origin);
@@ -76,9 +69,7 @@ describe("Security middleware integration tests", () => {
         .set("Origin", "https://blocked.example.com");
 
       expect(response.status).toBe(200);
-      expect(
-        response.headers["access-control-allow-origin"],
-      ).toBeUndefined();
+      expect(response.headers["access-control-allow-origin"]).toBeUndefined();
     } finally {
       restoreEnv("CORS_ORIGINS", previousCorsOrigins);
     }
@@ -91,22 +82,17 @@ describe("Security middleware integration tests", () => {
 
     try {
       for (let attempt = 0; attempt < 20; attempt += 1) {
-        const response = await request(app)
-          .post("/auth/login")
-          .send({});
+        const response = await request(app).post("/auth/login").send({});
 
         expect(response.status).not.toBe(429);
       }
 
-      const blockedResponse = await request(app)
-        .post("/auth/login")
-        .send({});
+      const blockedResponse = await request(app).post("/auth/login").send({});
 
       expect(blockedResponse.status).toBe(429);
       expect(blockedResponse.body).toEqual({
         status: "error",
-        message:
-          "Too many authentication attempts. Please try again later.",
+        message: "Too many authentication attempts. Please try again later.",
       });
     } finally {
       restoreEnv("NODE_ENV", previousNodeEnv);

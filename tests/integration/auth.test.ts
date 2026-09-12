@@ -10,9 +10,7 @@ const testUser = {
 
 describe("Authentication integration tests", () => {
   it("should register a new user", async () => {
-    const response = await request(app)
-      .post("/auth/register")
-      .send(testUser);
+    const response = await request(app).post("/auth/register").send(testUser);
 
     expect(response.status).toBe(201);
 
@@ -30,13 +28,9 @@ describe("Authentication integration tests", () => {
   });
 
   it("should reject duplicated email", async () => {
-    await request(app)
-      .post("/auth/register")
-      .send(testUser);
+    await request(app).post("/auth/register").send(testUser);
 
-    const response = await request(app)
-      .post("/auth/register")
-      .send(testUser);
+    const response = await request(app).post("/auth/register").send(testUser);
 
     expect(response.status).toBe(409);
 
@@ -47,16 +41,12 @@ describe("Authentication integration tests", () => {
   });
 
   it("should authenticate a registered user", async () => {
-    await request(app)
-      .post("/auth/register")
-      .send(testUser);
+    await request(app).post("/auth/register").send(testUser);
 
-    const response = await request(app)
-      .post("/auth/login")
-      .send({
-        email: testUser.email,
-        password: testUser.password,
-      });
+    const response = await request(app).post("/auth/login").send({
+      email: testUser.email,
+      password: testUser.password,
+    });
 
     expect(response.status).toBe(200);
 
@@ -72,16 +62,12 @@ describe("Authentication integration tests", () => {
   });
 
   it("should reject an invalid password", async () => {
-    await request(app)
-      .post("/auth/register")
-      .send(testUser);
+    await request(app).post("/auth/register").send(testUser);
 
-    const response = await request(app)
-      .post("/auth/login")
-      .send({
-        email: testUser.email,
-        password: "wrong-password",
-      });
+    const response = await request(app).post("/auth/login").send({
+      email: testUser.email,
+      password: "wrong-password",
+    });
 
     expect(response.status).toBe(401);
 
@@ -92,8 +78,7 @@ describe("Authentication integration tests", () => {
   });
 
   it("should reject access to profile without token", async () => {
-    const response = await request(app)
-      .get("/users/me");
+    const response = await request(app).get("/users/me");
 
     expect(response.status).toBe(401);
 
@@ -104,16 +89,12 @@ describe("Authentication integration tests", () => {
   });
 
   it("should return the authenticated user profile", async () => {
-    await request(app)
-      .post("/auth/register")
-      .send(testUser);
+    await request(app).post("/auth/register").send(testUser);
 
-    const loginResponse = await request(app)
-      .post("/auth/login")
-      .send({
-        email: testUser.email,
-        password: testUser.password,
-      });
+    const loginResponse = await request(app).post("/auth/login").send({
+      email: testUser.email,
+      password: testUser.password,
+    });
 
     const token = loginResponse.body.token;
 

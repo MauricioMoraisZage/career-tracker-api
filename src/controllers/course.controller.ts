@@ -74,11 +74,7 @@ export class CourseController {
       const userId = getAuthenticatedUserId(request);
       const courseId = getRequiredParam(request.params.id, "id");
 
-      const course = await courseService.update(
-        userId,
-        courseId,
-        request.body,
-      );
+      const course = await courseService.update(userId, courseId, request.body);
 
       return response.status(200).json({
         status: "success",

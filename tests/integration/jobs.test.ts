@@ -31,9 +31,7 @@ describe("Jobs integration tests", () => {
       });
 
     const response = await request(app)
-      .get(
-        "/jobs?status=applied&remote=true&q=backend&page=1&limit=10",
-      )
+      .get("/jobs?status=applied&remote=true&q=backend&page=1&limit=10")
       .set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(200);

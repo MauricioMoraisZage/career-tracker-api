@@ -9,10 +9,7 @@ export const jobStatusSchema = z.enum([
 ]);
 
 export const createJobSchema = z.object({
-  company: z
-    .string()
-    .trim()
-    .min(2, "Company must have at least 2 characters"),
+  company: z.string().trim().min(2, "Company must have at least 2 characters"),
 
   position: z
     .string()
