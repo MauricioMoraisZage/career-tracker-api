@@ -8,6 +8,22 @@ A REST API for managing professional development, courses, learning modules, job
 
 The project was built with a strong focus on layered architecture, secure authentication, data validation, automated testing, interactive documentation, Docker-based local execution, production deployment on Vercel, and Prisma Postgres.
 
+## What this project demonstrates
+
+This project demonstrates practical backend engineering beyond basic CRUD operations:
+
+- layered architecture with clear separation of responsibilities;
+- JWT authentication and per-user authorization;
+- PostgreSQL data modeling and Prisma transactions;
+- integration testing against a real database;
+- API security with Helmet, CORS, request limits, and rate limiting;
+- structured logging with Pino and request correlation IDs;
+- automated quality gates with ESLint, Prettier, TypeScript, and GitHub Actions;
+- Docker-based local infrastructure;
+- graceful server shutdown and database disconnection;
+- production deployment on Vercel.
+
+
 ## Live Deployment
 
 - **API:** [https://career-tracker-api.vercel.app](https://career-tracker-api.vercel.app)
@@ -31,8 +47,18 @@ The project was built with a strong focus on layered architecture, secure authen
 * Data validation with Zod
 * Automated integration testing
 * Interactive Swagger/OpenAPI documentation
+* HTTP security headers with Helmet
+* Configurable CORS policy
+* Authentication rate limiting
+* JSON request size limits
+* Structured logging with Pino
+* Request correlation with `x-request-id`
+* Sensitive log-field redaction
+* ESLint and Prettier quality checks
+* GitHub Actions continuous integration
+* Graceful shutdown on `SIGTERM` and `SIGINT`
 * PostgreSQL and API execution with Docker Compose
-* Automatic Prisma migrations on startup
+* Prisma migrations for local, test, and CI environments
 
 ## Technologies
 
@@ -47,8 +73,13 @@ The project was built with a strong focus on layered architecture, secure authen
 * Vitest
 * Supertest
 * Swagger / OpenAPI
+* Helmet
+* Pino
 * Docker
 * Docker Compose
+* GitHub Actions
+* ESLint
+* Prettier
 * pnpm
 
 ## Architecture
@@ -169,6 +200,9 @@ DATABASE_URL=postgresql://career_user:career_pass@localhost:5432/career_db?schem
 
 JWT_SECRET=replace_with_a_secure_random_secret
 JWT_EXPIRES_IN=1d
+
+CORS_ORIGINS=http://localhost:3000
+LOG_LEVEL=info
 ```
 
 Never commit the `.env` file.
@@ -305,6 +339,32 @@ pnpm start
 ```
 
 The TypeScript source code is compiled into the `dist` directory.
+
+## Application lifecycle
+
+The standalone Node.js server handles `SIGTERM` and `SIGINT` for graceful shutdown.
+
+During shutdown, the application:
+
+1. stops accepting new HTTP connections;
+2. closes the HTTP server;
+3. disconnects Prisma from PostgreSQL;
+4. uses a timeout safeguard to prevent the process from hanging indefinitely.
+
+This lifecycle logic is used by the standalone Node.js server and does not interfere with the serverless Vercel entry point.
+
+## Code quality and CI
+
+The repository uses automated quality gates to keep changes consistent and safe.
+
+Available checks:
+
+```bash
+pnpm lint
+pnpm format:check
+pnpm build
+pnpm test
+```
 
 ## Automated tests
 
@@ -484,17 +544,24 @@ REJECTED
 OFFER
 ```
 
-## Security
+## Security and observability
 
 * Passwords are stored using bcrypt hashes.
 * Authentication is based on JWT.
 * Private routes are protected by middleware.
 * Resource ownership is validated.
 * Request data is validated with Zod.
-* Sensitive variables are kept outside Git.
+* Helmet adds HTTP security headers.
+* CORS origins are configurable through `CORS_ORIGINS`.
+* Authentication endpoints are protected by rate limiting.
+* JSON request bodies are limited to 1 MB.
+* Pino provides structured application and HTTP logging.
+* Requests receive or preserve an `x-request-id` correlation ID.
+* Authorization and cookie headers are redacted from logs.
+* Sensitive environment variables are kept outside Git.
 * The test database is separate from the main database.
 * Password hashes are never exposed in responses.
-* Transactions prevent partial updates.
+* Prisma transactions prevent partial business-operation updates.
 
 ## Checking the database inside Docker
 
