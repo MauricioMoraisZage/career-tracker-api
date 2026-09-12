@@ -62,11 +62,13 @@ app.get("/", (_request, response) => {
     message: "Career Tracker API",
     documentation: "https://career-tracker-api.vercel.app/api-docs",
     health: "https://career-tracker-api.vercel.app/health",
-    databaseHealth: "https://career-tracker-api.vercel.app/db-health"
+    databaseHealth: "https://career-tracker-api.vercel.app/db-health",
   });
 });
 
-app.get("/openapi.json", (_request, response) => { return response.status(200).json(swaggerSpecification) });
+app.get("/openapi.json", (_request, response) => {
+  return response.status(200).json(swaggerSpecification);
+});
 
 const swaggerHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -98,10 +100,7 @@ const swaggerHtml = `<!DOCTYPE html>
 </html>`;
 
 app.get(["/api-docs", "/api-docs/"], (_request, response) => {
-  return response
-    .status(200)
-    .type("html")
-    .send(swaggerHtml);
+  return response.status(200).type("html").send(swaggerHtml);
 });
 
 /**
@@ -128,14 +127,19 @@ app.get(["/api-docs", "/api-docs/"], (_request, response) => {
  *                   example: Career Tracker API is running
  */
 app.get("/health", (_request, response) => {
-  return response.status(200).json({ status: "ok", message: "Career Tracker API is running" });
+  return response
+    .status(200)
+    .json({ status: "ok", message: "Career Tracker API is running" });
 });
 
 app.get("/db-health", async (_request, response) => {
   const usersCount = await prisma.user.count();
 
   return response.status(200).json({
-    status: "ok", database: "connected", usersCount });
+    status: "ok",
+    database: "connected",
+    usersCount,
+  });
 });
 
 //app.use("/auth", authRoutes);

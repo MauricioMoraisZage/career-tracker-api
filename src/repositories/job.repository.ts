@@ -1,12 +1,7 @@
 import type { Prisma } from "../generated/prisma/client.js";
 import { prisma } from "../lib/prisma.js";
 
-type JobStatus =
-  | "SAVED"
-  | "APPLIED"
-  | "INTERVIEW"
-  | "REJECTED"
-  | "OFFER";
+type JobStatus = "SAVED" | "APPLIED" | "INTERVIEW" | "REJECTED" | "OFFER";
 
 type CreateJobData = {
   company: string;

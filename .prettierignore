@@ -1,0 +1,10 @@
+node_modules
+dist
+coverage
+src/generated
+pnpm-lock.yaml
+.env
+.env.*
+README.md
+compose.yaml
+pnpm-workspace.yaml

@@ -66,6 +66,12 @@ jobs:
       - name: Generate Prisma Client
         run: pnpm prisma generate
 
+      - name: Run ESLint
+        run: pnpm lint
+
+      - name: Check formatting
+        run: pnpm format:check
+
       - name: Apply database migrations
         run: pnpm prisma migrate deploy
 

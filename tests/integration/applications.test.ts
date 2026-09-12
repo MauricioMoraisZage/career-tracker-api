@@ -80,8 +80,7 @@ describe("Applications integration tests", () => {
         notes: "Initial application.",
       });
 
-    const applicationId =
-      createResponse.body.application.id;
+    const applicationId = createResponse.body.application.id;
 
     const listResponse = await request(app)
       .get("/applications?page=1&limit=10")
@@ -100,9 +99,7 @@ describe("Applications integration tests", () => {
       });
 
     expect(updateResponse.status).toBe(200);
-    expect(updateResponse.body.application.cvVersion).toBe(
-      "Backend CV v2",
-    );
+    expect(updateResponse.body.application.cvVersion).toBe("Backend CV v2");
 
     const deleteResponse = await request(app)
       .delete(`/applications/${applicationId}`)

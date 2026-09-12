@@ -1,7 +1,10 @@
 import { z } from "zod";
 
 export const courseStatusSchema = z.enum([
-  "not_started", "in_progress", "completed", "paused",
+  "not_started",
+  "in_progress",
+  "completed",
+  "paused",
 ]);
 
 export const createCourseSchema = z.object({

@@ -15,11 +15,7 @@ function parseDate(date?: string): Date {
 }
 
 export class ApplicationService {
-  async create(
-    userId: string,
-    jobId: string,
-    data: CreateApplicationInput,
-  ) {
+  async create(userId: string, jobId: string, data: CreateApplicationInput) {
     const job = await jobRepository.findByIdAndUserId(jobId, userId);
 
     if (!job) {
@@ -30,10 +26,7 @@ export class ApplicationService {
       await applicationRepository.findByJobIdAndUserId(jobId, userId);
 
     if (existingApplication) {
-      throw new AppError(
-        "Application already exists for this job",
-        409,
-      );
+      throw new AppError("Application already exists for this job", 409);
     }
 
     return applicationRepository.createAndMarkJobApplied({
@@ -66,11 +59,10 @@ export class ApplicationService {
   }
 
   async findOne(userId: string, applicationId: string) {
-    const application =
-      await applicationRepository.findByIdAndUserId(
-        applicationId,
-        userId,
-      );
+    const application = await applicationRepository.findByIdAndUserId(
+      applicationId,
+      userId,
+    );
 
     if (!application) {
       throw new AppError("Application not found", 404);
@@ -84,11 +76,10 @@ export class ApplicationService {
     applicationId: string,
     data: UpdateApplicationInput,
   ) {
-    const application =
-      await applicationRepository.findByIdAndUserId(
-        applicationId,
-        userId,
-      );
+    const application = await applicationRepository.findByIdAndUserId(
+      applicationId,
+      userId,
+    );
 
     if (!application) {
       throw new AppError("Application not found", 404);
@@ -98,18 +89,15 @@ export class ApplicationService {
       cvVersion: data.cvVersion,
       coverLetter: data.coverLetter,
       notes: data.notes,
-      appliedAt: data.appliedAt
-        ? new Date(data.appliedAt)
-        : undefined,
+      appliedAt: data.appliedAt ? new Date(data.appliedAt) : undefined,
     });
   }
 
   async delete(userId: string, applicationId: string) {
-    const application =
-      await applicationRepository.findByIdAndUserId(
-        applicationId,
-        userId,
-      );
+    const application = await applicationRepository.findByIdAndUserId(
+      applicationId,
+      userId,
+    );
 
     if (!application) {
       throw new AppError("Application not found", 404);

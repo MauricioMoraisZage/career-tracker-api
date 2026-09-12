@@ -40,8 +40,11 @@ const authController = new AuthController();
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-authRoutes.post("/register", validateBody(registerSchema), authController.register);
-
+authRoutes.post(
+  "/register",
+  validateBody(registerSchema),
+  authController.register,
+);
 
 /**
  * @openapi

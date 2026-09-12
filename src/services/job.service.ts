@@ -6,12 +6,7 @@ import type {
   UpdateJobInput,
 } from "../validations/job.schema.js";
 
-type JobStatus =
-  | "SAVED"
-  | "APPLIED"
-  | "INTERVIEW"
-  | "REJECTED"
-  | "OFFER";
+type JobStatus = "SAVED" | "APPLIED" | "INTERVIEW" | "REJECTED" | "OFFER";
 
 const jobRepository = new JobRepository();
 

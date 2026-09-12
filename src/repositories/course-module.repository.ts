@@ -18,36 +18,36 @@ type UpdateCourseModuleData = {
 };
 
 export class CourseModuleRepository {
-	 create(data: CreateCourseModuleData) {
-	   return prisma.courseModule.create({ data });
-	 }
+  create(data: CreateCourseModuleData) {
+    return prisma.courseModule.create({ data });
+  }
 
-	 findManyByCourseId(courseId: string) {
-	   return prisma.courseModule.findMany({
-	     where: { courseId },
-	     orderBy: { order: "asc" },
-	   });
-	 }
+  findManyByCourseId(courseId: string) {
+    return prisma.courseModule.findMany({
+      where: { courseId },
+      orderBy: { order: "asc" },
+    });
+  }
 
-	findByIdAndUserId(id: string, userId: string) {
-	  return prisma.courseModule.findFirst({
-	    where: {
-	      id,
-	      course: { userId },
-	    },
-	  });
-	}
+  findByIdAndUserId(id: string, userId: string) {
+    return prisma.courseModule.findFirst({
+      where: {
+        id,
+        course: { userId },
+      },
+    });
+  }
 
-	update(id: string, data: UpdateCourseModuleData) {
-	  return prisma.courseModule.update({
-	    where: { id },
-	    data,
-	  });
-	}
+  update(id: string, data: UpdateCourseModuleData) {
+    return prisma.courseModule.update({
+      where: { id },
+      data,
+    });
+  }
 
-	delete(id: string) {
-	  return prisma.courseModule.delete({
-	    where: { id },
-	  });
-	} 
+  delete(id: string) {
+    return prisma.courseModule.delete({
+      where: { id },
+    });
+  }
 }

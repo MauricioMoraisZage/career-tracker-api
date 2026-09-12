@@ -21,14 +21,8 @@ export const listApplicationsQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).optional(),
 });
 
-export type CreateApplicationInput = z.infer<
-  typeof createApplicationSchema
->;
+export type CreateApplicationInput = z.infer<typeof createApplicationSchema>;
 
-export type UpdateApplicationInput = z.infer<
-  typeof updateApplicationSchema
->;
+export type UpdateApplicationInput = z.infer<typeof updateApplicationSchema>;
 
-export type ListApplicationsQuery = z.infer<
-  typeof listApplicationsQuerySchema
->;
+export type ListApplicationsQuery = z.infer<typeof listApplicationsQuerySchema>;
